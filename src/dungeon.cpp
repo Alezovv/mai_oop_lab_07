@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <iomanip>
 
 Dungeon::Dungeon(int width, int height)
     : width_(width), height_(height), fight_visitor_(npcs_, cout_mtx_)
@@ -142,11 +143,14 @@ void Dungeon::printMap() const
 {
     std::shared_lock<std::shared_mutex> lock(mtx_);
     std::lock_guard<std::mutex> cout_lock(cout_mtx_); // Контроль std::cout
-    std::cout << "\033[2J\033[1;1H"; 
+    std::cout << "=== Current Map ===" << std::endl;
     for (const auto& npc : npcs_) {
         if (npc->isAlive()) {
             // Мертвые NPC не отображаются
-            std::cout << npc->getType()[0] << " at (" << npc->getX() << ", " << npc->getY() << ")" << std::endl;
+            std::cout << npc->getType() << " " << npc->getName() << " at ("
+                      << std::fixed << std::setprecision(1) << npc->getX() << ", "
+                      << std::fixed << std::setprecision(1) << npc->getY() << ")" << std::endl;
         }
     }
+    std::cout << std::endl;
 }
